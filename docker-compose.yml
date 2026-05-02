@@ -11,20 +11,20 @@ services:
       - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p12345"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
-    build: .
+    image: jimmynow/uniservicios:1.0
     container_name: poliservis-app
     ports:
       - "8080:8080"
     depends_on:
-      - db
-    environment:
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_NAME=poliservis
-      - DB_USER=root
-      - DB_PASSWORD=12345
+      db:
+        condition: service_healthy
 
   jenkins:
     image: jenkins/jenkins:lts
