@@ -163,7 +163,11 @@ public class ChatServlet extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
         }
+        
+        // Si llegamos aquí sin haber redirigido, es un error
         resp.sendRedirect(req.getContextPath() + "/chat");
     }
 }

@@ -5,116 +5,97 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Chat con ${otroUsuario.nombre} — PoliServis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${servicio.tituloServicio} — PoliServis</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
+
 <%@ include file="../navbar.jsp" %>
-<div class="container" style="max-width: 600px; margin: 2rem auto;">
-    <div class="card">
-        <div class="card-body">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid var(--border);">
-                <div>
-                    <h3 style="margin:0;">${otroUsuario.nombre}</h3>
-                    <span class="text-muted" style="font-size:0.85rem;">${conversacion.servicio.tituloServicio}</span>
-                    <c:if test="${not empty estadoSolicitud}">
-                        <span class="badge ${estadoSolicitud == 'SOLICITADO' ? 'badge-primary' : (estadoSolicitud == 'EN_PROGRESO' ? 'badge-accent' : 'badge-secondary')}" style="font-size:0.7rem; margin-left:0.5rem; vertical-align:middle;">
-                            ${estadoSolicitud}
-                        </span>
-                    </c:if>
-                </div>
-                <a href="${pageContext.request.contextPath}/chat" class="text-muted" style="font-size:0.9rem;">← Volver</a>
+
+<div class="container">
+    <div class="hero-banner" style="min-height: auto; padding: 2rem;">
+        <div class="hero-stripe"></div>
+        <div class="epn-tag">${categoria.nombre}</div>
+        <h1 style="font-size: 2.5rem;">${servicio.tituloServicio}</h1>
+        <p style="font-size: 1.1rem; opacity: 0.9;">Publicado por <strong>${proveedor.nombre}</strong></p>
+    </div>
+
+    <div class="grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <!-- Detalles del Servicio -->
+        <div class="card">
+            <div class="card-body">
+                <h3 class="mb-2">Descripción del Servicio</h3>
+                <p style="line-height: 1.6; color: var(--text-muted);">${servicio.descripcionServicio}</p>
+                
+                <hr class="my-3">
+                
+                <h3 class="mb-2">Calificaciones</h3>
+                <c:choose>
+                    <c:when test="${empty calificaciones}">
+                        <p class="text-muted">Aún no hay calificaciones para este servicio.</p>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="promedio-badge mb-3">
+                            <span style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">
+                                <fmt:formatNumber value="${promedio}" pattern="0.0"/>
+                            </span> / 5.0 ⭐
+                        </div>
+                        <c:forEach var="cal" items="${calificaciones}">
+                            <div class="review-item mb-2" style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                                <div class="d-flex justify-content-between">
+                                    <strong>${cal.usuario.nombre}</strong>
+                                    <span class="text-accent">${cal.estrellas} ⭐</span>
+                                </div>
+                                <p class="small text-muted mt-1">${cal.comentario}</p>
+                            </div>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
             </div>
-            
-            <div class="chat-box" id="chatBox">
-                <c:if test="${empty mensajes}">
-                    <p class="text-center text-muted" style="margin:auto;">Envía un mensaje para iniciar la conversación.</p>
-                </c:if>
-                <c:forEach var="msg" items="${mensajes}">
-                    <div class="msg ${msg.remitente.idUsuario == sessionScope.usuarioActual.idUsuario ? 'msg-mine' : 'msg-other'}">
-                        ${msg.contenido}
-                        <span class="msg-time"><fmt:formatDate value="${msg.fechaEnvio}" pattern="HH:mm"/></span>
+        </div>
+
+        <!-- Barra lateral de acción -->
+        <div class="sidebar">
+            <div class="card" style="position: sticky; top: 2rem;">
+                <div class="card-body text-center">
+                    <div class="precio-tag" style="font-size: 2.5rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem;">
+                        $<fmt:formatNumber value="${servicio.precioServicio}" pattern="0.00"/>
                     </div>
-                </c:forEach>
+                    
+                    <c:choose>
+                        <c:when test="${esMiServicio}">
+                            <div class="alert alert-info" style="font-size: 0.9rem;">Este es tu propio servicio.</div>
+                            <a href="${pageContext.request.contextPath}/servicio/editar?id=${servicio.idServicio}" class="btn btn-outline w-100 mb-2">Editar Servicio</a>
+                        </c:when>
+                        <c:otherwise>
+                            <c:choose>
+                                <c:when test="${yaSolicite}">
+                                    <div class="alert alert-success" style="font-size: 0.9rem;">Ya has solicitado este servicio.</div>
+                                    <a href="${pageContext.request.contextPath}/chat?userId=${proveedor.idUsuario}&servicioId=${servicio.idServicio}" class="btn btn-primary w-100">Ir al Chat</a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/servicio/solicitar?id=${servicio.idServicio}" class="btn btn-accent w-100 py-3" style="font-size: 1.1rem; font-weight: 700;">
+                                        ¡Solicitar Ahora!
+                                    </a>
+                                    <p class="text-muted mt-2" style="font-size: 0.8rem;">Pagarás directamente al compañero al finalizar.</p>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
             
-            <form id="chatForm" action="${pageContext.request.contextPath}/chat" method="post" style="display:flex; gap:0.5rem; margin-top:1rem;">
-                <input type="hidden" name="idConversacion" value="${conversacion.idConversacion}">
-                <input type="text" name="mensaje" class="form-control" placeholder="Escribe un mensaje..." required autocomplete="off" style="flex:1;">
-                <button type="submit" class="btn btn-primary">Enviar</button>
-            </form>
+            <a href="${pageContext.request.contextPath}/home" class="btn btn-link w-100 mt-2">← Volver al inicio</a>
         </div>
     </div>
 </div>
-<script>
-    const chatBox = document.getElementById("chatBox");
-    let messageCount = chatBox.querySelectorAll('.msg').length;
 
-    function scrollAlFinal() {
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-    
-    // Scroll inicial
-    scrollAlFinal();
+<style>
+    .promedio-badge { background: #fff5f5; padding: 1rem; border-radius: 12px; display: inline-block; border: 1px solid #ffe3e3; }
+    .text-accent { color: var(--accent); font-weight: 700; }
+</style>
 
-    // Polling cada 2 segundos
-    setInterval(() => {
-        fetch(window.location.href)
-            .then(res => res.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newChatBox = doc.getElementById('chatBox');
-                if (newChatBox) {
-                    const newMessages = newChatBox.querySelectorAll('.msg');
-                    if (newMessages.length > messageCount) {
-                        chatBox.innerHTML = newChatBox.innerHTML;
-                        messageCount = newMessages.length;
-                        scrollAlFinal();
-                    }
-                }
-            })
-            .catch(err => console.error("Error actualizando el chat:", err));
-    }, 2000);
-
-    // Envío del formulario por AJAX
-    const form = document.getElementById('chatForm');
-    if (form) {
-        form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const inputMensaje = form.querySelector('input[name="mensaje"]');
-        const mensajeText = inputMensaje.value.trim();
-        if (!mensajeText) return;
-
-        const formData = new URLSearchParams(new FormData(form));
-        
-        // Limpiamos el input inmediatamente para mejor UX
-        inputMensaje.value = '';
-
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }).then(() => {
-            // Actualizamos inmediatamente el chat tras enviar
-            fetch(window.location.href)
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newChatBox = doc.getElementById('chatBox');
-                    if (newChatBox) {
-                        chatBox.innerHTML = newChatBox.innerHTML;
-                        messageCount = newChatBox.querySelectorAll('.msg').length;
-                        scrollAlFinal();
-                    }
-                });
-        }).catch(err => console.error("Error enviando mensaje:", err));
-        });
-    }
-</script>
 </body>
 </html>

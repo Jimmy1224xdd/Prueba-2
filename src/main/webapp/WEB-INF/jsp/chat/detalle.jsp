@@ -9,11 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <style>
-        .chat-box { height: 400px; overflow-y: auto; background: #f9f9f9; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.5rem; }
-        .msg { padding: 0.5rem 1rem; border-radius: 12px; max-width: 80%; word-wrap: break-word; }
-        .msg-mine { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .msg-other { background: #e0e0e0; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg-time { font-size: 0.65rem; opacity: 0.8; margin-top: 4px; display: block; text-align: right; }
+        .chat-box { height: 400px; overflow-y: auto; background: #ffffff; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .msg { padding: 0.8rem 1.2rem; border-radius: 18px; max-width: 75%; word-wrap: break-word; position: relative; font-size: 0.95rem; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .msg-mine { background: #1a4a7a; color: #ffffff !important; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg-other { background: #f0f2f5; color: #1c1e21 !important; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg-time { font-size: 0.7rem; opacity: 0.7; margin-top: 5px; display: block; text-align: right; }
     </style>
 </head>
 <body>
@@ -105,7 +105,8 @@
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
-        }).then(() => {
+        }).then(res => {
+            if (!res.ok) throw new Error("Error en el servidor");
             // Actualizamos inmediatamente el chat tras enviar
             fetch(window.location.href)
                 .then(res => res.text())
@@ -119,7 +120,10 @@
                         scrollAlFinal();
                     }
                 });
-        }).catch(err => console.error("Error enviando mensaje:", err));
+        }).catch(err => {
+            console.error("Error enviando mensaje:", err);
+            alert("No se pudo enviar el mensaje. Revisa tu conexión.");
+        });
         });
     }
 </script>
