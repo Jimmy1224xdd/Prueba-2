@@ -1,41 +1,19 @@
+name: Poliservis_GR06
 version: '3.8'
 
 services:
-
-  db:
-    image: mysql:8.3
-    container_name: poliservis-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: poliservis
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - poliservis-net
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p1234"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
 
   app:
     image: jimmynow/uniservicios:latest
     container_name: poliservis-app
     ports:
       - "8085:8080"
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
-      MYSQL_HOST: db
-      MYSQL_PORT: 3306
-      MYSQL_DATABASE: poliservis
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 1234
+      MYSQL_HOST: poli-servis-jimmyarias772.g.aivencloud.com
+      MYSQL_PORT: 13512
+      MYSQL_DATABASE: defaultdb
+      MYSQL_USER: avnadmin
+      MYSQL_PASSWORD: AVNS_z0fh2LSeHStzFyIugpo
     networks:
       - poliservis-net
 
@@ -57,9 +35,6 @@ services:
     networks:
       - poliservis-net
     restart: unless-stopped
-
-volumes:
-  mysql-data:
 
 networks:
   poliservis-net:

@@ -2,9 +2,9 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/poliservis?useSSL=false&amp;serverTimezone=UTC&amp;characterEncoding=utf8&amp;allowPublicKeyRetrieval=true</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">1234</property>
+        <property name="hibernate.connection.url">jdbc:mysql://poli-servis-jimmyarias772.g.aivencloud.com:13512/defaultdb?useSSL=true&amp;verifyServerCertificate=false&amp;serverTimezone=UTC&amp;characterEncoding=utf8&amp;allowPublicKeyRetrieval=true&amp;connectTimeout=5000&amp;socketTimeout=5000</property>
+        <property name="hibernate.connection.username">avnadmin</property>
+        <property name="hibernate.connection.password">AVNS_z0fh2LSeHStzFyIugpo</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.hbm2ddl.auto">none</property>
         <property name="hibernate.show_sql">true</property>

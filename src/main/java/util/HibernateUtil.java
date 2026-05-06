@@ -18,20 +18,30 @@ public class HibernateUtil {
         try {
             Configuration configuration = new Configuration().configure();
 
-            // Leer variables de entorno de Railway (o cualquier plataforma cloud)
-            String host     = System.getenv("MYSQL_HOST");
-            String port     = System.getenv("MYSQL_PORT");
-            String database = System.getenv("MYSQL_DATABASE");
-            String user     = System.getenv("MYSQL_USER");
-            String password = System.getenv("MYSQL_PASSWORD");
+            // Leer variables de entorno (preferencia a JDBC_URL completa)
+            String jdbcUrlEnv = System.getenv("JDBC_URL");
+            String host       = System.getenv("MYSQL_HOST");
+            String port       = System.getenv("MYSQL_PORT");
+            String database   = System.getenv("MYSQL_DATABASE");
+            String user       = System.getenv("MYSQL_USER");
+            String password   = System.getenv("MYSQL_PASSWORD");
 
-            // Si existen las variables de entorno, sobreescribir la config del XML
-            if (host != null && database != null && user != null && password != null) {
+            Properties props = new Properties();
+
+            if (jdbcUrlEnv != null && !jdbcUrlEnv.isEmpty()) {
+                // Si existe JDBC_URL completa, usarla directamente
+                props.setProperty("hibernate.connection.url", jdbcUrlEnv);
+                if (user != null) props.setProperty("hibernate.connection.username", user);
+                if (password != null) props.setProperty("hibernate.connection.password", password);
+                
+                configuration.addProperties(props);
+                System.out.println("[HibernateUtil] Usando JDBC_URL desde variables de entorno.");
+            } else if (host != null && database != null && user != null && password != null) {
+                // Si no hay JDBC_URL pero hay variables individuales, construirla
                 String dbPort = (port != null) ? port : "3306";
                 String jdbcUrl = "jdbc:mysql://" + host + ":" + dbPort + "/" + database
-                        + "?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true";
+                        + "?useSSL=true&verifyServerCertificate=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true&connectTimeout=5000&socketTimeout=5000";
 
-                Properties props = new Properties();
                 props.setProperty("hibernate.connection.url",      jdbcUrl);
                 props.setProperty("hibernate.connection.username", user);
                 props.setProperty("hibernate.connection.password", password);
@@ -39,10 +49,10 @@ public class HibernateUtil {
 
                 configuration.addProperties(props);
 
-                System.out.println("[HibernateUtil] Usando configuración desde variables de entorno (producción).");
+                System.out.println("[HibernateUtil] Usando configuración desde variables de entorno (individuales).");
                 System.out.println("[HibernateUtil] Conectando a: " + host + ":" + dbPort + "/" + database);
             } else {
-                System.out.println("[HibernateUtil] Variables de entorno no encontradas. Usando hibernate.cfg.xml (desarrollo local).");
+                System.out.println("[HibernateUtil] Variables de entorno no encontradas o incompletas. Usando hibernate.cfg.xml.");
             }
 
             sessionFactory = configuration.buildSessionFactory();
