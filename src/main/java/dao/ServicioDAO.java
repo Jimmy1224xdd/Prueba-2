@@ -135,28 +135,28 @@ public class ServicioDAO {
 
             // 1. Eliminar mensajes de conversaciones de este servicio
             session.createMutationQuery(
-                "DELETE FROM Mensaje m WHERE m.conversacion IN " +
-                "(SELECT c FROM Conversacion c WHERE c.servicio.idServicio = :id)")
-                .setParameter("id", idServicio)
-                .executeUpdate();
+                            "DELETE FROM Mensaje m WHERE m.conversacion IN " +
+                                    "(SELECT c FROM Conversacion c WHERE c.servicio.idServicio = :id)")
+                    .setParameter("id", idServicio)
+                    .executeUpdate();
 
             // 2. Eliminar conversaciones del servicio
             session.createMutationQuery(
-                "DELETE FROM Conversacion c WHERE c.servicio.idServicio = :id")
-                .setParameter("id", idServicio)
-                .executeUpdate();
+                            "DELETE FROM Conversacion c WHERE c.servicio.idServicio = :id")
+                    .setParameter("id", idServicio)
+                    .executeUpdate();
 
             // 3. Eliminar calificaciones del servicio
             session.createMutationQuery(
-                "DELETE FROM Calificacion cal WHERE cal.servicio.idServicio = :id")
-                .setParameter("id", idServicio)
-                .executeUpdate();
+                            "DELETE FROM Calificacion cal WHERE cal.servicio.idServicio = :id")
+                    .setParameter("id", idServicio)
+                    .executeUpdate();
 
             // 4. Eliminar solicitudes del servicio
             session.createMutationQuery(
-                "DELETE FROM Solicitud s WHERE s.servicio.idServicio = :id")
-                .setParameter("id", idServicio)
-                .executeUpdate();
+                            "DELETE FROM Solicitud s WHERE s.servicio.idServicio = :id")
+                    .setParameter("id", idServicio)
+                    .executeUpdate();
 
             // 5. Finalmente eliminar el servicio
             Servicio managed = session.get(Servicio.class, idServicio);
@@ -170,4 +170,4 @@ public class ServicioDAO {
             throw new RuntimeException("Error al eliminar servicio con dependencias", e);
         }
     }
-}
+}

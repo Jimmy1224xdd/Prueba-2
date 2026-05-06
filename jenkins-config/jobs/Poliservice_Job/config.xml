@@ -1,0 +1,53 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Pipeline CI/CD de PoliServis — UniServicios</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+
+  <!-- ─── Repositorio Git ─────────────────────────────────────────── -->
+  <scm class="hudson.plugins.git.GitSCM" plugin="git">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/JakeBenavides/GR06_1BT3_622_26A.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/main</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="empty-list"/>
+    <extensions/>
+  </scm>
+
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+
+  <!-- ─── Build Steps ────────────────────────────────────────────── -->
+  <builders>
+
+    <!-- Paso 1: Maven clean compile test package -DskipTests -->
+    <hudson.tasks.Maven>
+      <targets>clean compile test package -DskipTests</targets>
+      <mavenName>3.9</mavenName>
+      <usePrivateMavenRepository>false</usePrivateMavenRepository>
+    </hudson.tasks.Maven>
+
+    <!-- Paso 2: Ejecutar JenkinsDetectorMain -->
+    <hudson.tasks.Shell>
+      <command>java -cp target/classes util.JenkinsDetectorMain</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+
+  </builders>
+
+  <publishers/>
+  <buildWrappers/>
+</project>

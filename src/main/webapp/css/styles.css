@@ -49,8 +49,8 @@
 body {
     font-family: var(--font-body);
     background:
-        linear-gradient(135deg, rgba(238, 242, 247, 0.88) 0%, rgba(244, 247, 252, 0.92) 100%),
-        url("https://primeraplana.com.ec/wp-content/uploads/2023/06/WhatsApp-Image-2023-06-27-at-10.15.42-PM.jpeg") center/cover no-repeat fixed;
+            linear-gradient(135deg, rgba(238, 242, 247, 0.88) 0%, rgba(244, 247, 252, 0.92) 100%),
+            url("https://primeraplana.com.ec/wp-content/uploads/2023/06/WhatsApp-Image-2023-06-27-at-10.15.42-PM.jpeg") center/cover no-repeat fixed;
     color: var(--text-body);
     min-height: 100vh;
     line-height: 1.6;
@@ -353,7 +353,7 @@ select.form-control { cursor: pointer; }
     align-items: center;
     justify-content: center;
     background:
-        url("https://primeraplana.com.ec/wp-content/uploads/2023/06/WhatsApp-Image-2023-06-27-at-10.15.42-PM.jpeg") center/cover no-repeat fixed;
+            url("https://primeraplana.com.ec/wp-content/uploads/2023/06/WhatsApp-Image-2023-06-27-at-10.15.42-PM.jpeg") center/cover no-repeat fixed;
     position: relative;
 }
 .auth-wrapper::before {

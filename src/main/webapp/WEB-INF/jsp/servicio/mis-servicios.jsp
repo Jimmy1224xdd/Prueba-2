@@ -18,7 +18,7 @@
 <%@ include file="../navbar.jsp" %>
 <div class="container">
     <h2>Mis Servicios</h2>
-    
+
     <c:if test="${not empty sessionScope.mensajeExito}">
         <div class="alert alert-success">${sessionScope.mensajeExito}</div>
         <c:remove var="mensajeExito" scope="session"/>

@@ -55,15 +55,9 @@ public class DetalleServicioServlet extends HttpServlet {
             Double promedio = calificacionDAO.obtenerPromedio(servicio);
 
             // Flags útiles para la vista (controlar qué botones mostrar)
-            boolean esMiServicio = false;
-            boolean yaSolicite = false;
-            boolean yaCalifico = false;
-
-            if (usuarioActual != null) {
-                esMiServicio    = servicio.esPropietario(usuarioActual);
-                yaSolicite      = solicitudDAO.existeSolicitud(usuarioActual, servicio);
-                yaCalifico      = calificacionDAO.yaCalifico(usuarioActual, servicio);
-            }
+            boolean esMiServicio    = servicio.esPropietario(usuarioActual); // MOVE METHOD
+            boolean yaSolicite      = solicitudDAO.existeSolicitud(usuarioActual, servicio);
+            boolean yaCalifico      = calificacionDAO.yaCalifico(usuarioActual, servicio);
 
             req.setAttribute("servicio",      servicio);
             req.setAttribute("proveedor",     servicio.getUsuario());

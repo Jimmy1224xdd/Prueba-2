@@ -1,0 +1,44 @@
+jenkins:
+  systemMessage: "PoliServis CI/CD - Configurado automaticamente"
+  numExecutors: 2
+  scmCheckoutRetryCount: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          name: "Admin"
+          password: "admin"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: true
+
+tool:
+  maven:
+    installations:
+      - name: "3.9"
+        home: "/usr/share/maven"
+
+unclassified:
+  location:
+    url: "http://localhost:8082/"
+
+jobs:
+  - script: |
+      freeStyleJob('Poliservice_Job') {
+        scm {
+          git {
+            remote {
+              url('https://github.com/JakeBenavides/GR06_1BT3_622_26A.git')
+            }
+            branch('*/main')
+          }
+        }
+        steps {
+          maven {
+            mavenInstallation('3.9')
+            goals('clean compile test package -DskipTests')
+          }
+          shell('java -cp target/classes util.JenkinsDetectorMain')
+        }
+      }

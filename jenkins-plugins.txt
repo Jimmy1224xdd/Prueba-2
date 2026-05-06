@@ -1,0 +1,14 @@
+workflow-aggregator
+git
+github
+pipeline-stage-view
+maven-plugin
+junit
+docker-workflow
+docker-plugin
+credentials
+credentials-binding
+ws-cleanup
+antisamy-markup-formatter
+configuration-as-code
+job-dsl

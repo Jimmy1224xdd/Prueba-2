@@ -1,42 +1,66 @@
 version: '3.8'
 
 services:
+
   db:
     image: mysql:8.3
     container_name: poliservis-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: poliservis
     ports:
       - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - poliservis-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p12345"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p1234"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
 
   app:
-    image: jimmynow/uniservicios:1.0
+    image: jimmynow/uniservicios:latest
     container_name: poliservis-app
     ports:
-      - "8080:8080"
+      - "8085:8080"
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: poliservis
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 1234
+    networks:
+      - poliservis-net
 
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    image: jimmynow/uniservicios-jenkins:latest
     container_name: poliservis-jenkins
     user: root
     ports:
       - "8082:8080"
       - "50000:50000"
+    environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/jenkins.yaml
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     volumes:
-      - jenkins-data:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - poliservis-net
+    restart: unless-stopped
 
 volumes:
   mysql-data:
-  jenkins-data:
+
+networks:
+  poliservis-net:
+    driver: bridge

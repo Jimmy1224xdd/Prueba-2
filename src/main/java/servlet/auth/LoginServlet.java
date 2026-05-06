@@ -43,20 +43,13 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        try {
-            Optional<Usuario> resultado = usuarioDAO.login(correo, contrasena);
+        Optional<Usuario> resultado = usuarioDAO.login(correo, contrasena);
 
-            if (resultado.isPresent()) {
-                GestorSesion.iniciarSesion(request, resultado.get()); // EXTRACT CLASS
-                response.sendRedirect(request.getContextPath() + "/home");
-            } else {
-                request.setAttribute("error", "Correo o contraseña incorrectos.");
-                request.setAttribute("correo", correo);
-                request.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(request, response);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Error de base de datos: " + e.getMessage());
+        if (resultado.isPresent()) {
+            GestorSesion.iniciarSesion(request, resultado.get()); // EXTRACT CLASS
+            response.sendRedirect(request.getContextPath() + "/home");
+        } else {
+            request.setAttribute("error", "Correo o contraseña incorrectos.");
             request.setAttribute("correo", correo);
             request.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(request, response);
         }

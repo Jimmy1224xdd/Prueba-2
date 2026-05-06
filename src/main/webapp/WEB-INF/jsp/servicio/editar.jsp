@@ -14,14 +14,14 @@
     <div class="card">
         <div class="card-body">
             <h2 class="card-title">Editar Servicio</h2>
-            
+
             <c:if test="${not empty error}">
                 <div class="alert alert-danger mb-3">${error}</div>
             </c:if>
 
             <form action="${pageContext.request.contextPath}/servicio/editar" method="post">
                 <input type="hidden" name="idServicio" value="${servicio.idServicio}">
-                
+
                 <div class="mb-3">
                     <label class="form-label">Título del servicio</label>
                     <input type="text" name="titulo" class="form-control" value="${servicio.tituloServicio}" required>

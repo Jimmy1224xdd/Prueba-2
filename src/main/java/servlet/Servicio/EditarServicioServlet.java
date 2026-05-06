@@ -83,7 +83,7 @@ public class EditarServicioServlet extends HttpServlet {
         if (opt.isPresent()) {
             Servicio s = opt.get();
             Usuario usuarioActual = GestorSesion.getUsuarioActual(req);
-            
+
             if (s.esPropietario(usuarioActual)) {
                 s.setTituloServicio(titulo);
                 s.setDescripcionServicio(descripcion);
@@ -98,3 +98,4 @@ public class EditarServicioServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/servicio/mis-servicios");
     }
 }
+

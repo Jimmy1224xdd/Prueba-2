@@ -2,88 +2,69 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9'
+        maven '3.9'
     }
 
     environment {
-        DOCKER_IMAGE = 'tu-usuario-dockerhub/uniservicios'
+        DOCKER_IMAGE = 'jimmynow/uniservicios'
         DOCKER_TAG   = "${BUILD_NUMBER}"
     }
 
     stages {
 
-        // ─── 1. Obtener código ──────────────────────────────────────
+        // ─── 1. Checkout con fix de saltos de linea ─────────────────
         stage('Checkout') {
             steps {
                 checkout scm
-                echo "✅ Checkout completado — Rama: ${env.GIT_BRANCH}"
+                sh 'find . -name "*.sh" | xargs dos2unix 2>/dev/null || true'
+                sh 'git config core.autocrlf false || true'
+                echo "Checkout completado"
             }
         }
 
-        // ─── 2. Verificar entorno CI (NUEVO — usa JenkinsDetectorMain) ─
-        stage('Verify CI Environment') {
-            steps {
-                // Compila solo la clase utilitaria para ejecutarla antes
-                // del build completo — demuestra que Jenkins la detecta.
-                sh '''
-                    javac -d target/classes src/main/java/util/JenkinsDetectorMain.java || true
-                    java -cp target/classes util.JenkinsDetectorMain || true
-                '''
-                echo "Build #${BUILD_NUMBER} en job: ${JOB_NAME}"
-            }
-        }
-
-        // ─── 3. Compilar ────────────────────────────────────────────
+        // ─── 2. Build Maven: clean compile test package ──────────────
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
-                echo "✅ Compilación exitosa — Build #${BUILD_NUMBER}"
+                sh 'mvn clean compile test package -DskipTests'
+                echo "Compilacion y empaquetado exitosos — Build #${BUILD_NUMBER}"
             }
         }
 
-        // ─── 4. Pruebas TDD ─────────────────────────────────────────
+        // ─── 3. Tests TDD ────────────────────────────────────────────
         stage('Test') {
             steps {
                 sh 'mvn test'
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
                 }
             }
         }
 
-        // ─── 5. Empaquetar WAR ──────────────────────────────────────
-        stage('Package') {
+        // ─── 4. Verificar entorno CI (JenkinsDetectorMain) ───────────
+        stage('Verify CI Environment') {
             steps {
-                sh 'mvn package -DskipTests'
-                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
-                echo "✅ WAR generado y archivado"
+                sh 'java -cp target/classes util.JenkinsDetectorMain'
+                echo "Build #${BUILD_NUMBER} en job: ${JOB_NAME}"
             }
         }
 
-        // ─── 6. Build + Push Docker ─────────────────────────────────
-        stage('Docker Build & Push') {
+        // ─── 5. Archivar WAR ─────────────────────────────────────────
+        stage('Package') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+                echo "WAR generado y archivado"
+            }
+        }
+
+        // ─── 6. Docker Build ─────────────────────────────────────────
+        stage('Docker Build') {
             steps {
                 script {
                     sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                     sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
-                    // Descomentar cuando se configure credencial en Jenkins:
-                    // withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', ...)]) {
-                    //     sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    //     sh "docker push ${DOCKER_IMAGE}:latest"
-                    // }
-                    echo "✅ Imagen Docker construida: ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                }
-            }
-        }
-
-        // ─── 7. Deploy (opcional en este sprint) ────────────────────
-        stage('Deploy') {
-            steps {
-                script {
-                    echo 'Desplegando contenedor actualizado...'
-                    sh 'docker-compose up -d --build app || true'
+                    echo "Imagen Docker construida: ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
@@ -91,10 +72,10 @@ pipeline {
 
     post {
         success {
-            echo "🎉 Pipeline #${BUILD_NUMBER} completado con éxito — ${JOB_NAME}"
+            echo "Pipeline #${BUILD_NUMBER} completado con exito — ${JOB_NAME}"
         }
         failure {
-            echo "❌ Pipeline #${BUILD_NUMBER} FALLÓ — Revisar logs en ${BUILD_URL}"
+            echo "Pipeline #${BUILD_NUMBER} FALLO — Revisar logs"
         }
         always {
             cleanWs()

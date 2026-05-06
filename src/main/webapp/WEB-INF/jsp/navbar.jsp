@@ -65,12 +65,12 @@
         document.addEventListener("DOMContentLoaded", function() {
             var modal = document.getElementById("authModal");
             var closeBtn = document.getElementById("closeModalBtn");
-            
+
             // Cerrar modal
             closeBtn.onclick = function() {
                 modal.style.display = "none";
             }
-            
+
             // Interceptar clicks en elementos que requieren autenticación
             var reqAuthElements = document.querySelectorAll(".req-auth");
             reqAuthElements.forEach(function(el) {
@@ -79,7 +79,7 @@
                     modal.style.display = "flex";
                 });
             });
-            
+
             window.onclick = function(event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
