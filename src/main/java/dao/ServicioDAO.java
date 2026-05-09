@@ -170,4 +170,17 @@ public class ServicioDAO {
             throw new RuntimeException("Error al eliminar servicio con dependencias", e);
         }
     }
+
+    public List<Servicio> listarActivosPorUsuario(int idUsuario) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM Servicio s WHERE s.usuario.idUsuario = :id AND s.estado = :estado " +
+                         "ORDER BY s.fechaPublicacionServicio DESC";
+            return session.createQuery(hql, Servicio.class)
+                    .setParameter("id", idUsuario)
+                    .setParameter("estado", EstadoServicio.ACTIVO)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al listar servicios activos por usuario", e);
+        }
+    }
 }

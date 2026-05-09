@@ -1,109 +1,140 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio — PoliServis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
-</head>
-<body>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+        <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+            <!DOCTYPE html>
+            <html lang="es">
 
-<%@ include file="navbar.jsp" %>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Inicio — PoliServis</title>
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap"
+                    rel="stylesheet">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+            </head>
 
-<div class="container">
+            <body>
 
-    <%-- Mensaje de éxito tras publicar --%>
-    <c:if test="${not empty sessionScope.mensajeExito}">
-        <div class="alert alert-success mt-3">${sessionScope.mensajeExito}</div>
-        <c:remove var="mensajeExito" scope="session"/>
-    </c:if>
+                <%@ include file="navbar.jsp" %>
 
-    <%-- Hero banner EPN --%>
-    <div class="hero-banner">
-        <div class="hero-stripe"></div>
-        <div class="epn-tag">Escuela Politécnica Nacional</div>
-        <h1>Hola, <c:choose>
-            <c:when test="${not empty sessionScope.usuarioActual}">${sessionScope.usuarioActual.nombre}</c:when>
-            <c:otherwise>estudiante</c:otherwise>
-        </c:choose> 👋</h1>
-        <p>Explora los servicios que tus compañeros de la EPN tienen para ofrecerte, o publica los tuyos.</p>
-        <c:choose>
-            <c:when test="${not empty sessionScope.usuarioActual}">
-                <a href="${pageContext.request.contextPath}/servicio/publicar" class="btn btn-accent">
-                    + Publicar mi servicio
-                </a>
-            </c:when>
-            <c:otherwise>
-                <a href="#" class="btn btn-accent req-auth">
-                    + Publicar mi servicio
-                </a>
-            </c:otherwise>
-        </c:choose>
-    </div>
+                    <div class="container">
 
-    <%-- Barra de búsqueda --%>
-    <form action="${pageContext.request.contextPath}/servicio/buscar" method="get" class="search-bar mb-3">
-        <input type="text" name="q" class="form-control" placeholder="Buscar servicios...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
+                        <%-- Mensaje de éxito tras publicar --%>
+                            <c:if test="${not empty sessionScope.mensajeExito}">
+                                <div class="alert alert-success mt-3">${sessionScope.mensajeExito}</div>
+                                <c:remove var="mensajeExito" scope="session" />
+                            </c:if>
 
-    <%-- Categorías --%>
-    <div class="d-flex gap-1 mb-3" style="flex-wrap:wrap">
-        <c:forEach var="cat" items="${categorias}">
-            <a href="${pageContext.request.contextPath}/servicio/buscar?q=${cat.nombre}"
-               class="badge badge-primary" style="padding:.35rem .9rem;font-size:.8rem">
-               ${cat.nombre}
-            </a>
-        </c:forEach>
-    </div>
+                            <%-- Hero banner EPN --%>
+                                <div class="hero-banner">
+                                    <div class="hero-stripe"></div>
+                                    <div class="epn-tag">Escuela Politécnica Nacional</div>
+                                    <h1>Hola, <c:choose>
+                                            <c:when test="${not empty sessionScope.usuarioActual}">
+                                                ${sessionScope.usuarioActual.nombre}</c:when>
+                                            <c:otherwise>estudiante</c:otherwise>
+                                        </c:choose> 👋</h1>
+                                    <p>Explora los servicios que tus compañeros de la EPN tienen para ofrecerte, o
+                                        publica los tuyos.</p>
+                                    <c:choose>
+                                        <c:when test="${not empty sessionScope.usuarioActual}">
+                                            <a href="${pageContext.request.contextPath}/servicio/publicar"
+                                                class="btn btn-accent">
+                                                + Publicar mi servicio
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a href="#" class="btn btn-accent req-auth">
+                                                + Publicar mi servicio
+                                            </a>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
 
-    <%-- Grid de servicios --%>
-    <c:choose>
-        <c:when test="${empty servicios}">
-            <div class="empty-state">
-                <div class="icon">📭</div>
-                <h3>Aún no hay servicios publicados</h3>
-                <p class="mt-1">¡Sé el primero en ofrecer un servicio a tus compañeros!</p>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.usuarioActual}">
-                        <a href="${pageContext.request.contextPath}/servicio/publicar" class="btn btn-primary mt-2">
-                            Publicar servicio
-                        </a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="#" class="btn btn-primary mt-2 req-auth">
-                            Publicar servicio
-                        </a>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </c:when>
-        <c:otherwise>
-            <div class="grid-servicios">
-                <c:forEach var="srv" items="${servicios}">
-                    <div class="card servicio-card">
-                        <div class="card-body">
-                            <span class="badge badge-primary mb-1">Activo</span>
-                            <h3 class="card-title">${srv.tituloServicio}</h3>
-                            <p class="card-text">${srv.descripcionServicio}</p>
-                        </div>
-                        <div class="card-footer">
-                            <span class="precio">$<fmt:formatNumber value="${srv.precioServicio}" pattern="0.00"/></span>
-                            <a href="${pageContext.request.contextPath}/servicio/detalle?id=${srv.idServicio}"
-                               class="btn btn-outline btn-sm">Ver detalle</a>
-                        </div>
+                                <%-- Barra de búsqueda --%>
+                                    <form action="${pageContext.request.contextPath}/servicio/buscar" method="get"
+                                        class="search-bar mb-3">
+                                        <input type="text" name="q" class="form-control"
+                                            placeholder="Buscar servicios...">
+                                        <button type="submit" class="btn btn-primary">Buscar</button>
+                                    </form>
+
+                                    <%-- Categorías --%>
+                                        <div class="d-flex gap-1 mb-3" style="flex-wrap:wrap">
+                                            <c:forEach var="cat" items="${categorias}">
+                                                <a href="${pageContext.request.contextPath}/servicio/buscar?q=${cat.nombre}"
+                                                    class="badge badge-primary"
+                                                    style="padding:.35rem .9rem;font-size:.8rem">
+                                                    ${cat.nombre}
+                                                </a>
+                                            </c:forEach>
+                                        </div>
+
+                                        <%-- Grid de servicios --%>
+                                            <c:choose>
+                                                <c:when test="${empty servicios}">
+                                                    <div class="empty-state">
+                                                        <div class="icon">📭</div>
+                                                        <h3>Aún no hay servicios publicados</h3>
+                                                        <p class="mt-1">¡Sé el primero en ofrecer un servicio a tus
+                                                            compañeros!</p>
+                                                        <c:choose>
+                                                            <c:when test="${not empty sessionScope.usuarioActual}">
+                                                                <a href="${pageContext.request.contextPath}/servicio/publicar"
+                                                                    class="btn btn-primary mt-2">
+                                                                    Publicar servicio
+                                                                </a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <a href="#" class="btn btn-primary mt-2 req-auth">
+                                                                    Publicar servicio
+                                                                </a>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="grid-servicios">
+                                                        <c:forEach var="srv" items="${servicios}">
+                                                            <div class="card servicio-card">
+                                                                <div class="card-img-container"
+                                                                    style="height: 180px; overflow: hidden; background: #eee; border-radius: 12px 12px 0 0;">
+                                                                    <c:choose>
+                                                                        <c:when test="${not empty srv.fotoUrl}">
+                                                                            <img src="${pageContext.request.contextPath}/uploads/servicios/${srv.fotoUrl}"
+                                                                                alt="${srv.tituloServicio}"
+                                                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <img src="${pageContext.request.contextPath}/img/no-image.png"
+                                                                                alt="Sin imagen"
+                                                                                style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;">
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <span class="badge badge-primary mb-1">Activo</span>
+                                                                    <h3 class="card-title">${srv.tituloServicio}</h3>
+                                                                    <p class="card-text">${srv.descripcionServicio}</p>
+                                                                </div>
+                                                                <div class="card-footer">
+                                                                    <span class="precio">$
+                                                                        <fmt:formatNumber value="${srv.precioServicio}"
+                                                                            pattern="0.00" />
+                                                                    </span>
+                                                                    <a href="${pageContext.request.contextPath}/servicio/detalle?id=${srv.idServicio}"
+                                                                        class="btn btn-outline btn-sm">Ver detalle</a>
+                                                                </div>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+
+                                            <div style="height:3rem"></div>
                     </div>
-                </c:forEach>
-            </div>
-        </c:otherwise>
-    </c:choose>
 
-    <div style="height:3rem"></div>
-</div>
+            </body>
 
-</body>
-</html>
+            </html>

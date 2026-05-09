@@ -33,6 +33,9 @@ public class Servicio {
     @Column(name = "estado")
     private EstadoServicio estado;
 
+    @Column(name = "foto_url", length = 255)
+    private String fotoUrl;
+
     // RELACIÓN CON USUARIO (proveedor)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
@@ -103,4 +106,7 @@ public class Servicio {
 
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 }

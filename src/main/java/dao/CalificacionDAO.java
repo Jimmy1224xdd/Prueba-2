@@ -56,7 +56,7 @@ public class CalificacionDAO {
     }
 
     // PROMEDIO - obtenerPromedio(Puntuacion) del diagrama de clases
-    public Double obtenerPromedio(Servicio servicio) {
+    public Double calcularPromedioPorServicio(Servicio servicio) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "SELECT AVG(c.puntuacion) FROM Calificacion c WHERE c.servicio = :servicio";
             return session.createQuery(hql, Double.class)
@@ -64,6 +64,18 @@ public class CalificacionDAO {
                     .uniqueResult();
         } catch (Exception e) {
             throw new RuntimeException("Error al calcular promedio", e);
+        }
+    }
+
+    public double calcularPromedioPorUsuario(int idUsuario) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT AVG(c.puntuacion) FROM Calificacion c WHERE c.servicio.usuario.idUsuario = :id";
+            Double avg = session.createQuery(hql, Double.class)
+                    .setParameter("id", idUsuario)
+                    .uniqueResult();
+            return avg != null ? avg : 0.0;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al calcular promedio por usuario", e);
         }
     }
 }

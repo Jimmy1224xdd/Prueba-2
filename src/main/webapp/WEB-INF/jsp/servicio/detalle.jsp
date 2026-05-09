@@ -19,13 +19,31 @@
         <div class="hero-stripe"></div>
         <div class="epn-tag">${categoria.nombre}</div>
         <h1 style="font-size: 2.5rem;">${servicio.tituloServicio}</h1>
-        <p style="font-size: 1.1rem; opacity: 0.9;">Publicado por <strong>${proveedor.nombre}</strong></p>
+        <p style="font-size: 1.1rem; opacity: 0.9;">Publicado por 
+            <a href="${pageContext.request.contextPath}/vendedor/perfil?id=${proveedor.idUsuario}" 
+               style="color: white; text-decoration: underline; font-weight: 700;">
+                ${proveedor.nombre}
+            </a>
+        </p>
     </div>
 
     <div class="grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
         <!-- Detalles del Servicio -->
         <div class="card">
             <div class="card-body">
+                <div class="service-image-large mb-3" style="width: 100%; height: 300px; overflow: hidden; border-radius: 12px; background: #eee;">
+                    <c:choose>
+                        <c:when test="${not empty servicio.fotoUrl}">
+                            <img src="${pageContext.request.contextPath}/uploads/servicios/${servicio.fotoUrl}" 
+                                 alt="${servicio.tituloServicio}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="${pageContext.request.contextPath}/img/no-image.png" 
+                                 alt="Sin imagen" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;">
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+
                 <h3 class="mb-2">Descripción del Servicio</h3>
                 <p style="line-height: 1.6; color: var(--text-muted);">${servicio.descripcionServicio}</p>
                 

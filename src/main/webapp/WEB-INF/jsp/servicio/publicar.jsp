@@ -26,7 +26,7 @@
                 <div class="alert alert-danger">${error}</div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/servicio/publicar" method="post" novalidate>
+            <form action="${pageContext.request.contextPath}/servicio/publicar" method="post" enctype="multipart/form-data" novalidate>
 
                 <div class="form-group">
                     <label for="titulo">Título del servicio *</label>
@@ -54,6 +54,11 @@
                             <option value="${cat.idCategoria}">${cat.nombre}</option>
                         </c:forEach>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="foto">Foto del servicio (JPG o PNG, máx 2MB)</label>
+                    <input type="file" id="foto" name="foto" class="form-control" accept="image/jpeg,image/png">
                 </div>
 
                 <div class="d-flex gap-1 mt-3">

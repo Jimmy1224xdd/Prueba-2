@@ -1,4 +1,4 @@
-package servlet;
+package servlet.Servicio;
 
 import dao.NotificacionDAO;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 /**
  * Pantalla de notificaciones del proveedor.
- * GET  /notificaciones        → lista todas las notificaciones del usuario actual
+ * GET /notificaciones → lista todas las notificaciones del usuario actual
  * POST /notificaciones?accion=leer&id=X → marca una notificación como leída
  */
 @WebServlet("/notificaciones")
@@ -47,14 +47,15 @@ public class NotificacionServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String accion = req.getParameter("accion");
-        String idStr  = req.getParameter("id");
+        String idStr = req.getParameter("id");
 
         if ("leer".equals(accion) && idStr != null) {
             try {
                 int idNotificacion = Integer.parseInt(idStr);
                 Optional<Notificacion> opt = notificacionDAO.buscarPorId(idNotificacion);
                 opt.ifPresent(notificacionDAO::marcarLeida);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         } else if ("leerTodas".equals(accion)) {
             Usuario usuarioActual = GestorSesion.getUsuarioActual(req);
             List<Notificacion> notificaciones = notificacionDAO.listarPorUsuario(usuarioActual);

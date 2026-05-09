@@ -19,7 +19,7 @@
                 <div class="alert alert-danger mb-3">${error}</div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/servicio/editar" method="post">
+            <form action="${pageContext.request.contextPath}/servicio/editar" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="idServicio" value="${servicio.idServicio}">
 
                 <div class="mb-3">
@@ -49,6 +49,19 @@
                         <option value="ACTIVO" ${servicio.estado == 'ACTIVO' ? 'selected' : ''}>ACTIVO</option>
                         <option value="INACTIVO" ${servicio.estado == 'INACTIVO' ? 'selected' : ''}>INACTIVO</option>
                     </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Foto del servicio</label>
+                    <c:if test="${not empty servicio.fotoUrl}">
+                        <div class="mb-2">
+                            <img src="${pageContext.request.contextPath}/uploads/servicios/${servicio.fotoUrl}" 
+                                 alt="Foto actual" style="max-width: 150px; border-radius: 8px; display: block;">
+                            <small class="text-muted">Foto actual</small>
+                        </div>
+                    </c:if>
+                    <input type="file" name="foto" class="form-control" accept="image/jpeg,image/png">
+                    <small class="text-muted">Selecciona una nueva foto para reemplazar la actual (JPG/PNG, máx 2MB)</small>
                 </div>
 
                 <div class="mb-3">

@@ -13,10 +13,18 @@ import modelo.Usuario;
 import modelo.types.EstadoServicio;
 import util.GestorSesion;
 
+import util.ImagenUtil;
+import jakarta.servlet.http.Part;
+
 import java.io.IOException;
 import java.util.Optional;
 
 @WebServlet("/servicio/editar")
+@jakarta.servlet.annotation.MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
+        maxFileSize = 1024 * 1024 * 2,      // 2 MB
+        maxRequestSize = 1024 * 1024 * 10   // 10 MB
+)
 public class EditarServicioServlet extends HttpServlet {
 
     private final ServicioDAO servicioDAO = new ServicioDAO();
@@ -90,6 +98,27 @@ public class EditarServicioServlet extends HttpServlet {
                 s.setPrecioServicio(precio);
                 s.setCategoria(categoriaDAO.buscarPorId(idCategoria).orElse(s.getCategoria()));
                 s.marcarDisponibilidad(estado);
+
+                // Manejo de la foto
+                Part filePart = req.getPart("foto");
+                if (filePart != null && filePart.getSize() > 0) {
+                    String errorImagen = ImagenUtil.validarImagen(filePart);
+                    if (errorImagen != null) {
+                        req.getSession().setAttribute("mensajeError", errorImagen);
+                        resp.sendRedirect(req.getContextPath() + "/servicio/editar?id=" + id);
+                        return;
+                    }
+
+                    try {
+                        String uploadPath = getServletContext().getRealPath("/uploads/servicios/");
+                        String fotoUrl = ImagenUtil.guardarImagen(filePart, uploadPath);
+                        s.setFotoUrl(fotoUrl);
+                    } catch (IOException e) {
+                        req.getSession().setAttribute("mensajeError", "Error al guardar la imagen: " + e.getMessage());
+                        resp.sendRedirect(req.getContextPath() + "/servicio/editar?id=" + id);
+                        return;
+                    }
+                }
 
                 servicioDAO.actualizar(s);
                 req.getSession().setAttribute("mensajeExito", "Servicio actualizado correctamente.");

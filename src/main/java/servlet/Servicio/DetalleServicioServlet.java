@@ -52,7 +52,7 @@ public class DetalleServicioServlet extends HttpServlet {
 
             // Calificaciones del servicio para mostrar en detalle
             List<Calificacion> calificaciones = calificacionDAO.listarPorServicio(servicio);
-            Double promedio = calificacionDAO.obtenerPromedio(servicio);
+            Double promedio = calificacionDAO.calcularPromedioPorServicio(servicio);
 
             // Flags útiles para la vista (controlar qué botones mostrar)
             boolean esMiServicio    = servicio.esPropietario(usuarioActual); // MOVE METHOD
