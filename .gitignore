@@ -4,7 +4,6 @@ target/
 # IDE
 .idea/
 *.iml
-.smarttomcat/
 conf/
 
 # Docker volumes — NO subir datos de Jenkins al repo
