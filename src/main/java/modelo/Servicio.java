@@ -33,7 +33,7 @@ public class Servicio {
     @Column(name = "estado")
     private EstadoServicio estado;
 
-    @Column(name = "foto_url", length = 255)
+    @Column(name = "foto_url", columnDefinition = "LONGTEXT")
     private String fotoUrl;
 
     // RELACIÓN CON USUARIO (proveedor)

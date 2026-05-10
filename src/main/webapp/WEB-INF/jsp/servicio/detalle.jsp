@@ -40,7 +40,8 @@
                                         style="width: 100%; height: 300px; overflow: hidden; border-radius: 12px; background: #eee;">
                                         <c:choose>
                                             <c:when test="${not empty servicio.fotoUrl}">
-                                                <img src="${pageContext.request.contextPath}/uploads/servicios/${servicio.fotoUrl}"
+                                                <c:set var="isBase64" value="${servicio.fotoUrl.startsWith('data:')}" />
+                                                <img src="${isBase64 ? servicio.fotoUrl : pageContext.request.contextPath.concat('/').concat(servicio.fotoUrl.startsWith('uploads/') ? '' : 'uploads/servicios/').concat(servicio.fotoUrl)}"
                                                     alt="${servicio.tituloServicio}"
                                                     onerror="this.src='${pageContext.request.contextPath}/img/no-image.png'; this.onerror=null;"
                                                     style="width: 100%; max-height: 400px; object-fit: cover;">

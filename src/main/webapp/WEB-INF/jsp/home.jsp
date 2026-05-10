@@ -101,12 +101,13 @@
                                                                 <div class="card-img-container"
                                                                     style="height: 180px; overflow: hidden; background: #eee; border-radius: 12px 12px 0 0;">
                                                                     <c:choose>
-                                                                        <c:when test="${not empty srv.fotoUrl}">
-                                                                            <img src="${pageContext.request.contextPath}/uploads/servicios/${srv.fotoUrl}"
-                                                                                alt="${srv.tituloServicio}"
-                                                                                onerror="this.src='${pageContext.request.contextPath}/img/no-image.png'; this.onerror=null;"
-                                                                                style="width: 100%; height: 100%; object-fit: cover;">
-                                                                        </c:when>
+                                                                         <c:when test="${not empty srv.fotoUrl}">
+                                                                             <c:set var="isBase64" value="${srv.fotoUrl.startsWith('data:')}" />
+                                                                             <img src="${isBase64 ? srv.fotoUrl : pageContext.request.contextPath.concat('/').concat(srv.fotoUrl.startsWith('uploads/') ? '' : 'uploads/servicios/').concat(srv.fotoUrl)}"
+                                                                                 alt="${srv.tituloServicio}"
+                                                                                 onerror="this.src='${pageContext.request.contextPath}/img/no-image.png'; this.onerror=null;"
+                                                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <img src="${pageContext.request.contextPath}/img/no-image.png"
                                                                                 alt="Sin imagen"

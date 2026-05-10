@@ -44,27 +44,20 @@ public class ImagenUtil {
     }
 
     /**
-     * Guarda la imagen en el servidor con un nombre UUID.
+     * Convierte la imagen a una cadena Base64 (Data URI).
      * @param filePart El Part del archivo.
-     * @param uploadPath Ruta física donde se guardará.
-     * @return El nombre del archivo guardado.
-     * @throws IOException Si hay error al guardar.
+     * @return La cadena Base64 lista para src de img.
+     * @throws IOException Si hay error al leer.
      */
-    public static String guardarImagen(Part filePart, String uploadPath) throws IOException {
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-
-        String fileName = filePart.getSubmittedFileName();
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        String newFileName = UUID.randomUUID().toString() + extension;
-
-        File file = new File(uploadDir, newFileName);
+    public static String convertirABase64(Part filePart) throws IOException {
+        if (filePart == null || filePart.getSize() == 0) return null;
+        
+        byte[] bytes;
         try (InputStream input = filePart.getInputStream()) {
-            Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            bytes = input.readAllBytes();
         }
-
-        return newFileName;
+        
+        String base64 = java.util.Base64.getEncoder().encodeToString(bytes);
+        return "data:" + filePart.getContentType() + ";base64," + base64;
     }
 }

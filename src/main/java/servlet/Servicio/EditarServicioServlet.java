@@ -110,11 +110,10 @@ public class EditarServicioServlet extends HttpServlet {
                     }
 
                     try {
-                        String uploadPath = getServletContext().getRealPath("/uploads/servicios/");
-                        String fotoUrl = ImagenUtil.guardarImagen(filePart, uploadPath);
+                        String fotoUrl = ImagenUtil.convertirABase64(filePart);
                         s.setFotoUrl(fotoUrl);
                     } catch (IOException e) {
-                        req.getSession().setAttribute("mensajeError", "Error al guardar la imagen: " + e.getMessage());
+                        req.getSession().setAttribute("mensajeError", "Error al procesar la imagen: " + e.getMessage());
                         resp.sendRedirect(req.getContextPath() + "/servicio/editar?id=" + id);
                         return;
                     }
