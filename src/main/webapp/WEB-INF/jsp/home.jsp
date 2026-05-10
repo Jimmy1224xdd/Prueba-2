@@ -104,6 +104,7 @@
                                                                         <c:when test="${not empty srv.fotoUrl}">
                                                                             <img src="${pageContext.request.contextPath}/uploads/servicios/${srv.fotoUrl}"
                                                                                 alt="${srv.tituloServicio}"
+                                                                                onerror="this.src='${pageContext.request.contextPath}/img/no-image.png'; this.onerror=null;"
                                                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                                                         </c:when>
                                                                         <c:otherwise>
